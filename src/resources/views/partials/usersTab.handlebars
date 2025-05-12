@@ -1,0 +1,81 @@
+<h4>Quản lý người dùng</h4>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Tên</th>
+      <th>Email</th>
+      <th>Ngày sinh</th>
+      <th>Giới tính</th>
+      <th>Vai trò</th>
+      <th>Hành động</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each users}}
+    <tr>
+      <td>{{this.name}}</td>
+      <td>{{this.email}}</td>
+      <td>{{this.dobFormatted}}</td>
+      <td>{{this.gender}}</td>
+      <td>{{this.role}}</td>
+      <td>
+        <button class="btn btn-warning btn-sm" onclick="toggleEdit('{{this._id}}')">Sửa</button>
+        <form method="POST" action="/admin/dashboard/{{this._id}}/delete1" style="display:inline;">
+          <button class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</button>
+        </form>
+      </td>
+    </tr>
+
+    <!-- Form sửa người dùng -->
+    <tr id="editForm-{{this._id}}" style="display:none;">
+      <td colspan="6">
+        <form method="POST" action="/admin/dashboard/{{this._id}}/edit1">
+          <div class="row">
+            <div class="col-md-2">
+              <input type="text" name="name" value="{{this.name}}" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+              <input type="email" name="email" value="{{this.email}}" class="form-control" required>
+            </div>
+            <div class="col-md-1">
+              <input type="date" name="dob" value="{{this.dobFormatted}}" class="form-control" placeholder="Ngày sinh">
+            </div>
+            <div class="col-md-2">
+              <select name="gender" class="form-control">
+                <option value="">-- Giới tính --</option>
+                <option value="male" {{#if (eq this.gender "male")}}selected{{/if}}>Nam</option>
+                <option value="female" {{#if (eq this.gender "female")}}selected{{/if}}>Nữ</option>
+                <option value="other" {{#if (eq this.gender "other")}}selected{{/if}}>Khác</option>
+              </select>
+            </div>
+            <div class="col-md-1">
+              <select name="role" class="form-control">
+                <option value="user" {{#if (eq this.role "user")}}selected{{/if}}>User</option>
+                <option value="admin" {{#if (eq this.role "admin")}}selected{{/if}}>Admin</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <input type="password" name="password" placeholder="Đổi mật khẩu?" class="form-control">
+            </div>
+            <div class="col-md-2">
+              <button type="submit" class="btn btn-success btn-sm">Lưu</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEdit('{{this._id}}')">Hủy</button>
+            </div>
+          </div>
+        </form>
+      </td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+<script>
+  function toggleEdit(id) {
+    const row = document.getElementById('editForm-' + id);
+    if (row.style.display === 'none') {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  }
+</script>

@@ -1,0 +1,145 @@
+<div class="container mt-5">
+  <h2 class="mb-4">Chọn Loại Phòng</h2>
+
+  <div class="container">
+    {{#each roomTypes}}
+      <div class="row mb-4 border rounded p-3 shadow-sm">
+        <div class="col-md-4">
+          <img src="{{this.image}}" alt="image" class="img-fluid rounded">
+        </div>
+        <div class="col-md-8">
+          <h5 class="fw-bold">{{this.name}}</h5>
+          <p>{{this.description}}</p>
+          <p>{{this.amenities}}</p>
+          <p><strong>Giá:</strong> {{this.price}} VND / đêm</p>
+
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bookingModal-{{this._id}}">
+            Đặt phòng
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Đặt phòng -->
+      <div class="modal fade" id="bookingModal-{{this._id}}" tabindex="-1" aria-labelledby="bookingModalLabel-{{this._id}}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="bookingModalLabel-{{this._id}}">Đặt phòng: {{this.name}}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <form action="/bookings" method="POST">
+              <div class="modal-body">
+                <input type="hidden" name="roomTypeId" value="{{this._id}}">
+                {{#if currentUser}}
+                  <input type="hidden" name="userId" value="{{currentUser._id}}">
+                {{/if}}
+
+                <div class="mb-3">
+                  <label for="checkIn-{{this._id}}" class="form-label">Ngày nhận phòng</label>
+                  <input type="date" name="checkIn" id="checkIn-{{this._id}}" class="form-control" required data-price="{{this.price}}">
+                </div>
+
+                <div class="mb-3">
+                  <label for="checkOut-{{this._id}}" class="form-label">Ngày trả phòng</label>
+                  <input type="date" name="checkOut" id="checkOut-{{this._id}}" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                  <label for="roomId-{{this._id}}" class="form-label">Chọn phòng</label>
+                  <select name="roomId" id="roomId-{{this._id}}" class="form-select" required>
+                    <option value="">Vui lòng chọn ngày để xem phòng trống</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Tạm tính:</label>
+                  <p id="totalPrice-{{this._id}}" class="fw-bold">0 VND</p>
+                </div>
+
+                <!-- Phần Đặt cọc -->
+                <div class="mb-3">
+                  <label class="form-label">Đặt cọc (30%):</label>
+                  <p id="depositAmount-{{this._id}}" class="fw-bold">0 VND</p>
+                  <input type="hidden" name="deposit" id="depositInput-{{this._id}}" value="0">
+                </div>
+
+                <div class="mb-3">
+                  <label for="paymentMethod-{{this._id}}" class="form-label">Phương thức thanh toán</label>
+                  <select class="form-select" name="paymentMethod" id="paymentMethod-{{this._id}}" required>
+                    <option value="">-- Chọn phương thức --</option>
+                    <option value="credit_card">Thẻ tín dụng</option>
+                    <option value="bank_transfer">Chuyển khoản ngân hàng</option>
+                    <option value="cash">Tiền mặt khi đến</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-success">Xác nhận & Thanh toán</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+
+</div>
+<script>
+    function calculateTotalPrice(roomTypeId, pricePerNight) {
+    const checkIn = document.getElementById(`checkIn-${roomTypeId}`).value;
+    const checkOut = document.getElementById(`checkOut-${roomTypeId}`).value;
+    const totalPriceElem = document.getElementById(`totalPrice-${roomTypeId}`);
+    const depositElem = document.getElementById(`depositAmount-${roomTypeId}`);
+    const depositInput = document.getElementById(`depositInput-${roomTypeId}`);
+
+    if (!checkIn || !checkOut) {
+      totalPriceElem.textContent = '0 VND';
+      depositElem.textContent = '0 VND';
+      depositInput.value = '0';
+      return;
+    }
+
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+
+    const timeDiff = checkOutDate - checkInDate;
+    const nights = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+    if (nights > 0) {
+      const total = nights * pricePerNight;
+      const deposit = total * 0.30; // Tính đặt cọc 30%
+
+      totalPriceElem.textContent = total.toLocaleString('vi-VN') + ' VND';
+      depositElem.textContent = deposit.toLocaleString('vi-VN') + ' VND';
+      depositInput.value = deposit; // Lưu giá trị đặt cọc vào input ẩn
+    } else {
+      totalPriceElem.textContent = '0 VND';
+      depositElem.textContent = '0 VND';
+      depositInput.value = '0';
+    }
+  }
+
+  // Gắn sự kiện onchange cho các trường ngày khi DOM đã load
+  document.addEventListener('DOMContentLoaded', () => {
+    const allRoomTypes = document.querySelectorAll('[id^="checkIn-"]');
+
+    allRoomTypes.forEach(input => {
+      const roomTypeId = input.id.replace('checkIn-', '');
+
+      const checkInInput = document.getElementById(`checkIn-${roomTypeId}`);
+      const checkOutInput = document.getElementById(`checkOut-${roomTypeId}`);
+
+      if (checkInInput && checkOutInput) {
+        checkInInput.addEventListener('change', () => {
+            calculateTotalPrice(roomTypeId, parseInt(checkInInput.dataset.price));
+          });
+        checkOutInput.addEventListener('change', () => {
+            calculateTotalPrice(roomTypeId, parseInt(checkInInput.dataset.price));
+          });
+      }
+    });
+  });
+
+</script>

@@ -1,0 +1,125 @@
+<h4>Quản lý loại phòng</h4>
+
+<!-- Form thêm loại phòng -->
+<form method="POST" action="/admin/room-type" class="mb-4">
+  <div class="row g-2 mb-2">
+    <div class="col-md-3">
+      <input type="text" name="name" class="form-control" placeholder="Tên loại phòng" required>
+    </div>
+    <div class="col-md-3">
+      <input type="number" name="price" class="form-control" placeholder="Giá" required>
+    </div>
+    <div class="col-md-6">
+      <input type="text" name="description" class="form-control" placeholder="Mô tả">
+    </div>
+  </div>
+  <div class="row g-2 mb-2">
+    <div class="col-md-6">
+      <input type="text" name="amenities" class="form-control" placeholder="Tiện nghi (cách nhau bằng dấu phẩy)">
+    </div>
+    <div class="col-md-6">
+      <input type="text" name="image" class="form-control" placeholder="URL hình ảnh">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-success w-100">Thêm loại phòng</button>
+    </div>
+  </div>
+</form>
+
+<!-- Bảng danh sách loại phòng -->
+<table class="table table-bordered  mb-5">
+  <thead>
+    <tr>
+      <th>Tên loại</th>
+      <th>Giá</th>
+      <th>Mô tả</th>
+      <th>Tiện nghi</th>
+      <th>Ảnh</th>
+      <th>Hành động</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each roomTypes}}
+      <tr>
+        <td>{{this.name}}</td>
+        <td>{{this.price}}</td>
+        <td>{{this.description}}</td>
+        <td>
+          <ul>
+            {{#each this.amenities}}
+              <li>{{this}}</li>
+            {{/each}}
+          </ul>
+        </td>
+        <td><img src="{{this.image}}" alt="Image" width="50" height="50"></td>
+        <td>
+          <!-- Nút sửa và xóa -->
+          <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editRoomTypeModal{{this._id}}">Sửa</button>
+
+          <!-- Nút Xóa với Form trong Modal -->
+          <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteRoomTypeModal{{this._id}}">Xóa</button>
+        </td>
+      </tr>
+
+      <!-- Modal Sửa loại phòng -->
+      <div class="modal fade" id="editRoomTypeModal{{this._id}}" tabindex="-1" aria-labelledby="editRoomTypeModalLabel{{this._id}}" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editRoomTypeModalLabel{{this._id}}">Sửa loại phòng</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="/admin/dashboard/{{this._id}}/edit" method="POST">
+                <div class="mb-3">
+                  <label for="name" class="form-label">Tên loại phòng</label>
+                  <input type="text" class="form-control" id="name" name="name" value="{{this.name}}" required>
+                </div>
+                <div class="mb-3">
+                  <label for="price" class="form-label">Giá</label>
+                  <input type="number" class="form-control" id="price" name="price" value="{{this.price}}" required>
+                </div>
+                <div class="mb-3">
+                  <label for="description" class="form-label">Mô tả</label>
+                  <input type="text" class="form-control" id="description" name="description" value="{{this.description}}">
+                </div>
+                <div class="mb-3">
+                  <label for="amenities" class="form-label">Tiện nghi</label>
+                  <input type="text" class="form-control" id="amenities" name="amenities" value="{{#each this.amenities}}{{this}},{{/each}}">
+                </div>
+                <div class="mb-3">
+                  <label for="image" class="form-label">URL hình ảnh</label>
+                  <input type="text" class="form-control" id="image" name="image" value="{{this.image}}">
+                </div>
+                <button type="submit" class="btn btn-primary">Cập nhật</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Xóa loại phòng -->
+      <div class="modal fade" id="deleteRoomTypeModal{{this._id}}" tabindex="-1" aria-labelledby="deleteRoomTypeModalLabel{{this._id}}" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteRoomTypeModalLabel{{this._id}}">Xác nhận xóa loại phòng</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Bạn có chắc chắn muốn xóa loại phòng <strong>{{this.name}}</strong> không?</p>
+            </div>
+            <div class="modal-footer">
+              <form action="/admin/dashboard/{{this._id}}/delete" method="POST">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-danger">Xóa</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </tbody>
+</table>

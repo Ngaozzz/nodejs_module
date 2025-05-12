@@ -1,0 +1,267 @@
+<!-- Navbar -->
+<nav class="navbar sticky-top navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+  <div class="container-fluid p-0">
+    <a class="navbar-brand" href="/">Hotel Booking</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link active" href="/">Trang Chủ</a></li>
+        <li class="nav-item"><a class="nav-link" href="/bookings">Đặt Phòng</a></li>
+        <li class="nav-item"><a class="nav-link" href="/service">Ưu đãi & Dịch vụ</a></li>
+        <li class="nav-item" id="checkRoomNav" style="display: none;"><a class="nav-link" href="/bookings/my_bookings">Tài khoản của tôi</a></li>
+        <li class="nav-item" id="dashboardNav" style="display: none;"><a class="nav-link" href="/admin/dashboard">Quản lý</a></li>
+      </ul>
+
+      <!-- Avatar / Đăng nhập -->
+      <div class="auth-icon ms-auto me-3" id="authIcon" style="cursor: pointer;">
+        <!-- Sẽ được JS thêm vào -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Auth Popup -->
+  <div class="auth-popup" id="authPopup">
+    <div id="authTabs" class="auth-toggle mb-3 text-center">
+      <span id="signInTab" class="active">Đăng nhập </span>
+      <span id="signUpTab">Đăng ký </span>
+    </div>
+
+    <!-- Sign In Form -->
+    <form id="signInForm">
+      <label for="dob" class="form-label">Nhập email của bạn </label>
+      <div class="mb-3"><input type="email" name="email" class="form-control" placeholder="Email" required></div>
+      <label for="dob" class="form-label">Nhập mật khẩu của bạn </label>
+      <div class="mb-3"><input type="password" name="password" class="form-control" placeholder="Password" required></div>
+      <button type="submit" class="btn btn-primary w-100">Login</button>
+
+      <div class="text-center mt-2">
+        <span>Bạn quên mật khẩu? </span>
+        <a href="#" id="forgotPassword">Quên mật khẩu</a>
+        <span>Bạn chưa có tài khoản? </span>
+        
+      </div>
+    </form>
+
+    <!-- Logout Form -->
+    <div id="logoutForm" style="display: none;">
+      <p class="text-center mb-2 fw-bold" id="welcomeText"></p>
+      <button id="logoutBtn" class="btn btn-danger w-100">Đăng xuất</button>
+    </div>
+
+   <!-- Sign Up Form -->
+<form id="signUpForm" action="/users/register" method="POST">
+  <!-- Step 1: Tên, email, số điện thoại -->
+  <div class="step" id="step1">
+    <div class="mb-3"><input type="text" name="name" class="form-control" placeholder="Họ và tên" required></div>
+    <div class="mb-3"><input type="email" name="email" class="form-control" placeholder="Email" required></div>
+    <div class="mb-3"><input type="text" name="phone" class="form-control" placeholder="Số điện thoại" required></div>
+    <button type="button" class="btn btn-primary" id="next1">Next</button>
+  </div>
+
+  <!-- Step 2: Mật khẩu và nhập lại mật khẩu -->
+  <div class="step" id="step2" style="display: none;">
+    <div class="mb-3"><input type="password" name="password" class="form-control" placeholder="Mật khẩu" required></div>
+    <div class="mb-3"><input type="password" name="confirmPassword" class="form-control" placeholder="Nhập lại mật khẩu" required></div>
+    <button type="button" class="btn btn-secondary" id="back2">Back</button>
+    <button type="button" class="btn btn-primary" id="next2">Next</button>
+  </div>
+
+  <!-- Step 3: Giới tính và ngày sinh -->
+  <div class="step" id="step3" style="display: none;">
+    <div class="mb-3">
+      <select name="gender" class="form-select" required>
+        <option value="">Giới tính</option>
+        <option value="male">Nam</option>
+        <option value="female">Nữ</option>
+        <option value="other">Khác</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="dob" class="form-label">Ngày sinh</label>
+      <input type="date" name="dob" class="form-control" required>
+    </div>
+    <button type="button" class="btn btn-secondary" id="back3">Back</button>
+    <button type="submit" class="btn btn-success w-100">Đăng ký</button>
+  </div>
+</form>
+
+
+  </div>
+</nav>
+
+<script>
+// Khai báo
+const authIcon = document.getElementById('authIcon');
+const authPopup = document.getElementById('authPopup');
+const signInTab = document.getElementById('signInTab');
+const signUpTab = document.getElementById('signUpTab');
+const signInForm = document.getElementById('signInForm');
+const signUpForm = document.getElementById('signUpForm');
+const logoutForm = document.getElementById('logoutForm');
+const logoutBtn = document.getElementById('logoutBtn');
+const welcomeText = document.getElementById('welcomeText');
+const authTabs = document.getElementById('authTabs');
+const dashboardItem = document.getElementById('dashboardNav');
+const checkRoomItem = document.getElementById('checkRoomNav');
+
+// Hiển thị navbar theo vai trò
+function updateNavbarByRole(role) {
+  if (role === 'admin') {
+    dashboardItem.style.display = '';
+    checkRoomItem.style.display = 'none';
+  } else {
+    dashboardItem.style.display = 'none';
+    checkRoomItem.style.display = '';
+  }
+}
+
+// Hiển thị thông tin người dùng
+function showLoggedInUI(userName, role, avatarUrl) {
+  authIcon.innerHTML = `
+    <img src="${avatarUrl}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+    <span class="fw-bold ms-2">${userName}</span>
+  `;
+  authTabs.style.display = 'none';
+  signInForm.style.display = 'none';
+  signUpForm.style.display = 'none';
+  logoutForm.style.display = 'block';
+  welcomeText.innerText = `Xin chào, ${userName}!`;
+  updateNavbarByRole(role);
+}
+
+// Xử lý click avatar
+authIcon.addEventListener('click', () => {
+  authPopup.classList.toggle('active');
+});
+
+// Chuyển tab đăng nhập / đăng ký
+signInTab.addEventListener('click', () => {
+  signInTab.classList.add('active');
+  signUpTab.classList.remove('active');
+  signInForm.style.display = 'block';
+  signUpForm.style.display = 'none';
+  logoutForm.style.display = 'none';
+});
+
+signUpTab.addEventListener('click', () => {
+  signUpTab.classList.add('active');
+  signInTab.classList.remove('active');
+  signUpForm.style.display = 'block';
+  signInForm.style.display = 'none';
+  logoutForm.style.display = 'none';
+  step1.style.display = 'block';
+  step2.style.display = 'none';
+  step3.style.display = 'none';
+});
+
+// Đóng popup khi click ngoài
+document.addEventListener('click', (e) => {
+  if (!authPopup.contains(e.target) && !authIcon.contains(e.target)) {
+    authPopup.classList.remove('active');
+  }
+});
+
+// Đăng nhập
+signInForm.addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const email = signInForm.email.value;
+  const password = signInForm.password.value;
+
+  try {
+    const response = await fetch('/users/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+      credentials: 'include'
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const { name, role, avatarUrl = '/uploads/avatars/default.jpg' } = data.user;
+
+      localStorage.setItem('userName', name);
+      localStorage.setItem('userRole', role);
+      localStorage.setItem('avatarUrl', avatarUrl);
+
+      showLoggedInUI(name, role, avatarUrl);
+      authPopup.classList.remove('active');
+    } else {
+      const msg = await response.text();
+      alert(msg || 'Đăng nhập thất bại. Vui lòng kiểm tra lại.');
+    }
+  } catch (err) {
+    alert('Lỗi kết nối server. Vui lòng thử lại.');
+  }
+});
+
+// Tự động điền lại khi đã đăng nhập
+window.addEventListener('DOMContentLoaded', () => {
+  const name = localStorage.getItem('userName');
+  const role = localStorage.getItem('userRole');
+  const avatarUrl = localStorage.getItem('avatarUrl') || '/uploads/avatars/default.jpg';
+
+  if (name && role) {
+    showLoggedInUI(name, role, avatarUrl);
+  } else {
+    authIcon.innerHTML = `<a href="#" class="btn btn-outline-primary">Đăng nhập</a>`;
+    authTabs.style.display = 'flex';
+    signInForm.style.display = 'block';
+    signUpForm.style.display = 'none';
+    logoutForm.style.display = 'none';
+    welcomeText.innerText = 'Vui lòng đăng nhập hoặc đăng ký.';
+    dashboardItem.style.display = 'none';
+    checkRoomItem.style.display = 'none';
+  }
+});
+
+// Đăng xuất
+logoutBtn.addEventListener('click', () => {
+  localStorage.clear();
+  authIcon.innerHTML = `<a href="#" class="btn btn-outline-primary">Đăng nhập</a>`;
+  authTabs.style.display = 'flex';
+  signInForm.style.display = 'block';
+  signUpForm.style.display = 'none';
+  logoutForm.style.display = 'none';
+  welcomeText.innerText = 'Vui lòng đăng nhập hoặc đăng ký.';
+  dashboardItem.style.display = 'none';
+  checkRoomItem.style.display = 'none';
+  window.location.href = '/';
+});
+
+// Đăng ký multi-step
+const step1 = document.getElementById('step1');
+const step2 = document.getElementById('step2');
+const step3 = document.getElementById('step3');
+
+document.getElementById('next1').addEventListener('click', () => {
+  step1.style.display = 'none';
+  step2.style.display = 'block';
+  step2.querySelector('input[name="password"]').focus();
+});
+
+document.getElementById('next2').addEventListener('click', () => {
+  const pw = signUpForm.password.value;
+  const cpw = signUpForm.confirmPassword.value;
+  if (pw !== cpw) {
+    alert('Mật khẩu nhập lại không khớp!');
+    return;
+  }
+  step2.style.display = 'none';
+  step3.style.display = 'block';
+});
+
+document.getElementById('back2').addEventListener('click', () => {
+  step2.style.display = 'none';
+  step1.style.display = 'block';
+});
+
+document.getElementById('back3').addEventListener('click', () => {
+  step3.style.display = 'none';
+  step2.style.display = 'block';
+});
+</script>

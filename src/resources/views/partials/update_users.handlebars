@@ -1,0 +1,154 @@
+<h3>Thông tin cá nhân</h3>
+
+<div class="profile-container  mb-5">
+  <div id="viewInfo">
+    <p><strong>Ảnh đại diện:</strong></p>
+    <img src="{{User.avatar}}" alt="Avatar" style="width: 100px; height: 100px; border-radius: 50%;">
+    <button onclick="toggleEdit('image')">Sửa</button>
+    <p><strong>Họ tên:</strong> {{User.name}} <button onclick="toggleEdit('name')">Sửa</button></p>
+    <p><strong>Email:</strong> {{User.email}} <button onclick="toggleEdit('email')">Sửa</button></p>
+    <p><strong>Số điện thoại:</strong> {{User.phone}} <button onclick="toggleEdit('phone')">Sửa</button></p>
+    <p><strong>ngày sinh:</strong> {{User.dob}} <button onclick="toggleEdit('dob')">Sửa</button></p>
+    <p><strong>Giới tính:</strong> {{User.gender}} <button onclick="toggleEdit('gender')">Sửa</button></p>
+  </div>
+ 
+       <div id="editImage" style="display: none;">
+  <form method="POST" action="/users/update-profile" enctype="multipart/form-data">
+    <input type="hidden" name="field" value="avatar"> <!-- thêm dòng này -->
+    <label>Chọn ảnh đại diện mới:</label><br>
+    <input type="file" name="avatar" accept="image/*" required><br><br>
+    <button type="submit">Cập nhật</button>
+    <button type="button" onclick="cancelEdit()">Hủy</button>
+  </form>
+</div>
+
+
+    
+    <div id="editName" style="display: none;">
+      <form method="POST" action="/users/update-profile">
+      <label>Họ tên:</label>
+      <input type="text" name="name" value="{{User.name}}" required>
+      <button type="submit">Cập nhật</button>
+      <button type="button" onclick="cancelEdit()">Hủy</button>
+      </form>
+    </div>
+
+    <div id="editEmail" style="display: none;">
+      <form method="POST" action="/users/update-profile">
+      <label>Email:</label>
+      <input type="email" name="email" value="{{User.email}}" readonly>
+      <button type="submit">Cập nhật</button>
+      <button type="button" onclick="cancelEdit()">Hủy</button>
+      </form>
+    </div>
+
+    <div id="editPhone" style="display: none;">
+      <form method="POST" action="/users/update-profile">
+      <label>Số điện thoại:</label>
+      <input type="text" name="phone" value="{{User.phone}}" required>
+      <button type="submit">Cập nhật</button>
+      <button type="button" onclick="cancelEdit()">Hủy</button>
+      </form>
+    </div>
+
+    <div id="editdob" style="display: none;">
+      <form method="POST" action="/users/update-profile">
+       <label for="dob">Ngày sinh :</label>
+    <input type="date" id="dob" name="dob" value="{{User.dobFormatted}}" required>
+    <button type="submit" class="btn btn-success">Cập nhật</button>
+    <button type="button" class="btn btn-secondary" onclick="cancelEdit('dob')">Hủy</button>
+      </form>
+    </div>
+
+    <div id="editgender" style="display: none;">
+      <form method="POST" action="/users/update-profile">
+      <label>Giới tính</label>
+      <input type="text" name="gender" value="{{User.gender}}" required>
+      <button type="submit">Cập nhật</button>
+      <button type="button" onclick="cancelEdit()">Hủy</button>
+      </form>
+    </div>
+  
+</div>
+
+<style>
+.profile-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.profile-container p {
+  font-size: 16px;
+  margin: 8px 0;
+}
+
+.profile-container input {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0 15px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.profile-container button {
+  padding: 8px 12px;
+  margin-right: 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.profile-container button[type="submit"] {
+  background-color: #28a745;
+  color: white;
+}
+
+.profile-container button[type="button"] {
+  background-color: #ccc;
+}
+</style>
+
+<script>
+  // Hàm này sẽ hiển thị form chỉnh sửa cho thông tin tương ứng
+  function toggleEdit(field) {
+    // Ẩn tất cả các phần sửa
+   
+  // Ẩn tất cả các phần sửa
+  document.getElementById('editName').style.display = 'none';
+  document.getElementById('editEmail').style.display = 'none';
+  document.getElementById('editPhone').style.display = 'none';
+  document.getElementById('editdob').style.display = 'none';
+  document.getElementById('editgender').style.display = 'none';
+  document.getElementById('editImage').style.display = 'none';
+
+  document.getElementById('viewInfo').style.display = 'none';
+
+  if (field === 'name') {
+    document.getElementById('editName').style.display = 'block';
+  } else if (field === 'email') {
+    document.getElementById('editEmail').style.display = 'block';
+  } else if (field === 'phone') {
+    document.getElementById('editPhone').style.display = 'block';
+  } else if (field === 'dob') {
+    document.getElementById('editdob').style.display = 'block';
+  } else if (field === 'gender') {
+    document.getElementById('editgender').style.display = 'block';
+  } else if (field === 'image') {
+    document.getElementById('editImage').style.display = 'block';
+  }
+
+
+    // Hiển thị form cập nhật
+    document.getElementById('editForm').style.display = 'block';
+  }
+
+  // Hàm này sẽ quay lại trang thông tin cá nhân mà không lưu thay đổi
+  function cancelEdit() {
+    document.getElementById('viewInfo').style.display = 'block';
+    document.getElementById('editForm').style.display = 'none';
+  }
+</script>

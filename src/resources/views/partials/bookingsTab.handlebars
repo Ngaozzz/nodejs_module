@@ -1,0 +1,73 @@
+<!-- Form lọc theo ngày -->
+<h4>Quản lý đặt phòng</h4>
+<form method="GET" action="/admin/dashboard" class="mb-3">
+  <input type="hidden" name="tab" value="bookings">
+  <input type="date" name="date" value="{{selectedDate}}" class="form-control w-25 d-inline-block">
+  <button class="btn btn-primary">Lọc theo ngày</button>
+</form>
+
+
+<div class="row mb-4">
+  <div class="col-md-6">
+    <a href="?tab=bookings&date={{selectedDate}}&filter=booked" style="text-decoration: none;">
+      <div class="card border-danger">
+        <div class="card-body">
+          <h5 class="card-title text-danger">Phòng đã đặt</h5>
+          <p class="card-text display-6">{{bookedCount}}</p>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6">
+    <a href="?tab=bookings&date={{selectedDate}}&filter=available" style="text-decoration: none;">
+      <div class="card border-success">
+        <div class="card-body">
+          <h5 class="card-title text-success">Phòng còn trống</h5>
+          <p class="card-text display-6">{{availableCount}}</p>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+
+
+
+{{#if bookedRoomsDetails.length}}
+<div class="card mt-4">
+  <div class="card-header bg-danger text-white">
+    Chi tiết phòng đã đặt ({{bookedRoomsDetails.length}})
+  </div>
+  <div class="card-body">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Phòng</th>
+          <th>Loại phòng</th>
+          <th>Khách hàng</th>
+          <th>Email</th>
+          <th>phone</th>
+          <th>Nhận phòng</th>
+          <th>Trả phòng</th>
+          <th>Tổng tiền</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each bookedRoomsDetails}}
+        <tr>
+          <td>{{roomNumber}}</td>
+          <td>{{roomType}}</td>
+          <td>{{userName}}</td>
+          <td>{{userEmail}}</td>
+          <td>{{userPhone}}</td>
+          <td>{{checkIn}}</td>
+          <td>{{checkOut}}</td>
+          <td>{{totalPrice}}₫</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</div>
+{{/if}}

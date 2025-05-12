@@ -1,0 +1,65 @@
+<form method="GET" action="/admin/dashboard" class="mb-3">
+  <label for="month">Chọn tháng:</label>
+  <input type="month" id="month" name="month" value="{{selectedMonth}}" class="form-control w-25 d-inline-block">
+  <button class="btn btn-primary">Xem doanh thu</button>
+</form>
+
+  
+
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <div class="card bg-light border-success">
+        <div class="card-body">
+          <h5 class="card-title">Tổng doanh thu tháng {{selectedMonth}}</h5>
+<p class="card-text text-success fs-4">{{totalRevenue}} VND</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card bg-light border-info">
+        <div class="card-body">
+          <h5 class="card-title">Doanh thu hôm nay</h5>
+          <p class="card-text text-info fs-4">{{todayRevenue}} VND</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-5">
+  <h4>Biểu đồ doanh thu 12 tháng gần nhất</h4>
+  <canvas id="revenueChart" width="800" height="400"></canvas>
+</div>
+  </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const revenueData = {{{monthlyRevenueString}}};
+  const labels = revenueData.map(item => item.month);
+  const revenues = revenueData.map(item => item.revenue);
+
+  const ctx = document.getElementById('revenueChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Doanh thu (VND)',
+        data: revenues,
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+  
+
+</script>

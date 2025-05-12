@@ -1,0 +1,111 @@
+
+
+
+<section id="background-slideshow" style="
+  width: 100vw;
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0;
+  padding: 0;">
+</section>
+
+
+
+<!-- Phần 2: Giới thiệu về khách sạn -->
+<section id="about" class="text-center">
+  <div class="container">
+    <h2>Giới thiệu về Khách sạn ABC</h2>
+    <p class="lead mt-4">
+      Tọa lạc tại trung tâm thành phố Thái Bình, Khách sạn ABC là điểm dừng chân lý tưởng cho du khách và người đi công tác. Với thiết kế hiện đại, không gian ấm cúng và dịch vụ chuyên nghiệp, chúng tôi cam kết mang đến cho bạn trải nghiệm lưu trú thoải mái và đáng nhớ.
+    </p>
+    <p class="lead mt-4">
+      Vị trí thuận tiện, gần các điểm tham quan và trung tâm mua sắm.
+
+      Phòng nghỉ đa dạng: phòng đơn, phòng đôi, phòng VIP – đầy đủ tiện nghi.
+
+      Dịch vụ ăn uống tại chỗ với thực đơn phong phú.
+
+      Wi-Fi miễn phí, lễ tân 24/7, dịch vụ giặt là và hỗ trợ đặt tour.
+    </p>
+
+    <p class="lead mt-4">
+      Hãy để Khách sạn ABC đồng hành cùng bạn trong hành trình khám phá Thái Bình!
+    </p>
+</section>
+
+<!-- Phần 3: Dịch vụ khách sạn -->
+<section id="services" class="text-center">
+  <div class="container">
+    <h2>Các dịch vụ nổi bật</h2>
+    <div class="row mt-5">
+      <div class="col-md-4 mb-4">
+        <h4>Địa điểm lý tưởng</h4>
+        <p>Khách sạn nằm gần các điểm tham quan nổi tiếng và trung tâm thương mại.</p>
+      </div>
+      <div class="col-md-4 mb-4">
+        <h4>Phòng nghỉ sang trọng</h4>
+        <p>Các phòng nghỉ được thiết kế hiện đại, đầy đủ tiện nghi.</p>
+      </div>
+      <div class="col-md-4 mb-4">
+        <h4>Dịch vụ tận tâm</h4>
+        <p>Đội ngũ nhân viên chuyên nghiệp, thân thiện và nhiệt tình.</p>
+      </div>
+  </div>
+    <div class="row mt-5">
+      <div class="col-md-4 mb-4">
+        <h4>Nhà hàng</h4>
+        <p>Thưởng thức ẩm thực đa dạng trong không gian ấm cúng.</p>
+      </div>
+      <div class="col-md-4 mb-4">
+        <h4>Spa & Massage</h4>
+        <p>Thư giãn với các liệu trình chăm sóc chuyên nghiệp.</p>
+      </div>
+      <div class="col-md-4 mb-4">
+        <h4>Hồ bơi & Gym</h4>
+        <p>Rèn luyện sức khỏe và tận hưởng hồ bơi hiện đại.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+<!-- Script đổi background -->
+<script>
+  const images = [
+  '/img/hotel1.jpg',
+  '/img/hotel2.jpg',
+  '/img/hotel3.jpg',
+  '/img/hotel4.jpg',
+  '/img/hotel5.jpg',
+  '/img/hotel6.jpg',
+  '/img/hotel7.jpg',
+  '/img/hotel8.jpg',
+  '/img/hotel9.jpg',
+  '/img/hotel10.jpg'
+];
+
+let current = 0;
+const slideshow = document.getElementById('background-slideshow');
+
+function changeBackground() {
+  slideshow.style.backgroundImage = `url('${images[current]}')`;
+  current = (current + 1) % images.length;
+}
+
+changeBackground();
+setInterval(changeBackground, 3000);
+
+
+</script>
+
+

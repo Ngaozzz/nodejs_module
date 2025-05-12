@@ -1,0 +1,121 @@
+<h4>Quản lý phòng</h4>
+
+<!-- Form thêm phòng -->
+<form action="/rooms" method="POST" class="mb-4">
+  <div class="row g-2">
+    <div class="col-md-3">
+      <input type="text" name="roomNumber" placeholder="Số phòng" required class="form-control" />
+    </div>
+    <div class="col-md-3">
+      <select name="roomType" class="form-control" required>
+        <option value="">-- Chọn loại phòng --</option>
+        {{#each roomTypes}}
+          <option value="{{this._id}}">{{this.name}}</option>
+        {{/each}}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <select name="status" class="form-control" required>
+        <option value="available">Có sẵn</option>
+        <option value="occupied">Đang sử dụng</option>
+        <option value="maintenance">Bảo trì</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <button class="btn btn-success w-100">Thêm phòng</button>
+    </div>
+  </div>
+</form>
+
+<!-- Bảng danh sách phòng -->
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Số phòng</th>
+      <th>Loại phòng</th>
+      <th>Trạng thái</th>
+      <th>Hành động</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each rooms}}
+      <tr>
+        <td>{{this.roomNumber}}</td>
+        <td>{{this.roomType.name}}</td>
+        <td>{{this.status}}</td>
+        <td>
+          <!-- Nút Sửa -->
+          <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editRoomModal-{{this._id}}">
+            Sửa
+          </button>
+          <!-- Nút Xóa -->
+          <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteRoomModal-{{this._id}}">
+            Xóa
+          </button>
+        </td>
+      </tr>
+
+      <!-- Edit Room Modal -->
+      <div class="modal fade" id="editRoomModal-{{this._id}}" tabindex="-1" aria-labelledby="editRoomModalLabel-{{this._id}}" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editRoomModalLabel-{{this._id}}">Chỉnh sửa phòng số {{this.roomNumber}}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <form action="/admin/dashboard/{{this._id}}/edit2" method="POST">
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label for="roomNumber-{{this._id}}" class="form-label">Số phòng</label>
+                  <input type="text" class="form-control" id="roomNumber-{{this._id}}" name="roomNumber" value="{{this.roomNumber}}" required />
+                </div>
+                <div class="mb-3">
+                  <label for="roomType-{{this._id}}" class="form-label">Loại phòng</label>
+                  <select class="form-control" id="roomType-{{this._id}}" name="roomType" required>
+                    {{#each ../roomTypes}}
+                      <option value="{{this._id}}" {{#ifCond this._id ../this.roomType._id}}selected{{/ifCond}}>{{this.name}}</option>
+                    {{/each}}
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="status-{{this._id}}" class="form-label">Trạng thái</label>
+                  <select id="status-{{this._id}}" name="status" class="form-control" required>
+                    <option value="available" {{#if (eq ../this.status "available")}}selected{{/if}}>Có sẵn</option>
+                    <option value="occupied" {{#if (eq ../this.status "occupied")}}selected{{/if}}>Đang sử dụng</option>
+                    <option value="maintenance" {{#if (eq ../this.status "maintenance")}}selected{{/if}}>Bảo trì</option>
+                  </select>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Room Modal -->
+      <div class="modal fade" id="deleteRoomModal-{{this._id}}" tabindex="-1" aria-labelledby="deleteRoomModalLabel-{{this._id}}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteRoomModalLabel-{{this._id}}">Xác nhận xóa</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+              Bạn có chắc chắn muốn xóa phòng số {{this.roomNumber}} không?
+            </div>
+            <div class="modal-footer">
+              <form action="/admin/dashboard/{{this._id}}/delete2" method="POST">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-danger">Xóa</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    {{/each}}
+  </tbody>
+</table>

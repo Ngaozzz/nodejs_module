@@ -1,0 +1,172 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* ✅ thêm dòng này */
+}
+
+*, *::before, *::after {
+    box-sizing: inherit; /* ✅ toàn bộ phần tử con cũng kế thừa */
+}
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Chiều cao tối thiểu bằng 100% màn hình */
+    width: 100%;
+}
+.auth-popup {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    background: white;
+    border: 1px solid #ddd;
+    padding: 1rem;
+    border-radius: 8px;
+    z-index: 1000;
+    width: 300px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.auth-popup.active {
+    display: block;
+}
+.auth-icon {
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+
+  .auth-icon:hover  {
+    color: #ffc107; /* màu vàng khi hover */
+    transform: scale(1.11); /* phóng to nhẹ */
+    filter: brightness(1.11); /* làm sáng hơn */
+  }
+.auth-toggle span {
+    cursor: pointer;
+    font-weight: bold;
+}
+.auth-toggle span.active {
+    color: #007bff;
+}
+
+.container-footer {
+    background-color: aquamarine;
+    width: 100%;
+    max-width: 100%; 
+    padding: 10px;
+    text-align: center;
+}
+.content {
+    padding-left: 0;
+    padding-right: 0;
+    width: 100%;
+    margin: 0 auto;
+}
+.main-content {
+    flex: 1; 
+    width: 100%;
+}
+.auth-icon span {
+    font-size: 1.1rem;
+    color: #333;
+    cursor: default;
+    text-align: center;
+}
+.auth-popup {
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 1000;
+}
+.auth-popup.active {
+    display: block;
+}
+.auth-toggle span {
+    cursor: pointer;
+}
+.auth-toggle span.active {
+    font-weight: bold;
+    color: #007bff;
+}
+.form-label{
+    font-size: 13px;
+    color: #007bff;
+    margin-left: 10px;
+}
+.card img {
+    max-height: 200px;
+    object-fit: cover;
+  }
+.auth-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  padding: 30px;
+  z-index: 10000;
+  width: 400px;
+  display: none;
+}
+
+.auth-popup.active {
+  display: block;
+}
+
+/* Auth toggle tabs */
+.auth-toggle span {
+  cursor: pointer;
+  padding: 8px 16px;
+  margin: 0 5px;
+  border-radius: 5px;
+  font-weight: bold;
+  background: #f0f0f0;
+  display: inline-block;
+}
+
+.auth-toggle span.active {
+  background: #0d6efd;
+  color: white;
+}
+
+/* Steps in sign-up */
+.auth-popup .step {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  background-color: #f9f9f9;
+}
+.step {
+  display: none;
+}
+.logout-popup {
+  position: absolute;
+  top: 45px; /* Chỉnh lại để nó xuất hiện ngay dưới avatar */
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  border-radius: 5px;
+  padding: 10px;
+  display: none; /* Hidden by default */
+  z-index: 10;
+}
+
+.logout-popup button {
+  border: none;
+  background-color: #dc3545;
+  color: white;
+  padding: 10px;
+  font-size: 14px;
+  width: 100%;
+  text-align: center;
+}

@@ -1,0 +1,156 @@
+<style>
+  .tabs {
+    margin-top: 20px;
+  }
+
+  .tab-buttons button {
+    padding: 10px 20px;
+    margin-right: 5px;
+    border: none;
+    background-color: #e0e0e0;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .tab-buttons button.active {
+    background-color: #007BFF;
+    color: white;
+  }
+
+  .tab-content {
+    display: none;
+    margin-top: 20px;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+
+  th, td {
+    border: 1px solid #ccc;
+    padding: 12px;
+    text-align: center;
+  }
+
+  th {
+    background-color: #f0f0f0;
+  }
+
+  form label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+  }
+
+  form input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  form button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  form button:hover {
+    background-color: #218838;
+    
+  }
+  .booking-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .booking-card {
+    flex: 1 1 calc(33.333% - 20px); /* 3 cards per row with spacing */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #fdfdfd;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-sizing: border-box;
+  }
+
+  .booking-card p {
+    margin: 8px 0;
+    font-size: 16px;
+  }
+
+  .paid {
+    color: green;
+    font-weight: bold;
+  }
+
+  .unpaid {
+    color: red;
+    font-weight: bold;
+  }
+
+  @media (max-width: 768px) {
+    .booking-card {
+      flex: 1 1 100%;
+    }
+  }
+</style>
+<div class="container mt-5">
+<h2 style="margin-top: 20px;">Tài khoản của tôi</h2>
+
+<div class="tabs">
+  <div class="tab-buttons">
+    <button class="active" onclick="showTab('bookings')">Phòng đã đặt</button>
+    <button onclick="showTab('profile')">Thông tin cá nhân</button>
+  </div>
+
+      <div id="bookings" class="tab-content active mb-5">
+      <h3>Phòng bạn đã đặt</h3>
+      {{#if bookings.length}}
+        <div class="booking-cards">
+          {{#each bookings}}
+          <div class="booking-card">
+            <p><strong>Phòng:</strong> {{room.roomNumber}}</p>
+            <p><strong>Ngày nhận phòng:</strong> {{formatDate checkIn}}</p>
+            <p><strong>Ngày trả phòng:</strong> {{formatDate checkOut}}</p>
+            <p><strong>Trạng thái thanh toán:</strong> 
+              {{#if isPaid}}<span class="paid">Đã thanh toán</span>{{else}}<span class="unpaid">Chưa thanh toán</span>{{/if}}
+            </p>
+          </div>
+          {{/each}}
+        </div>
+      {{else}}
+        <p>Bạn chưa đặt phòng nào.</p>
+      {{/if}}
+    </div>
+
+
+  <div id="profile" class="tab-content">
+   {{> update_users}}
+</div>
+</div>
+
+
+
+<script>
+  function showTab(tabId) {
+    document.querySelectorAll(".tab-content").forEach(tab => tab.classList.remove("active"));
+    document.querySelectorAll(".tab-buttons button").forEach(btn => btn.classList.remove("active"));
+
+    document.getElementById(tabId).classList.add("active");
+    event.target.classList.add("active");
+  }
+</script>
