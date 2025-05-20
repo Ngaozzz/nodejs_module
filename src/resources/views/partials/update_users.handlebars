@@ -2,9 +2,7 @@
 
 <div class="profile-container  mb-5">
   <div id="viewInfo">
-    <p><strong>Ảnh đại diện:</strong></p>
-    <img src="{{User.avatar}}" alt="Avatar" style="width: 100px; height: 100px; border-radius: 50%;">
-    <button onclick="toggleEdit('image')">Sửa</button>
+    
     <p><strong>Họ tên:</strong> {{User.name}} <button onclick="toggleEdit('name')">Sửa</button></p>
     <p><strong>Email:</strong> {{User.email}} <button onclick="toggleEdit('email')">Sửa</button></p>
     <p><strong>Số điện thoại:</strong> {{User.phone}} <button onclick="toggleEdit('phone')">Sửa</button></p>
@@ -12,15 +10,7 @@
     <p><strong>Giới tính:</strong> {{User.gender}} <button onclick="toggleEdit('gender')">Sửa</button></p>
   </div>
  
-       <div id="editImage" style="display: none;">
-  <form method="POST" action="/users/update-profile" enctype="multipart/form-data">
-    <input type="hidden" name="field" value="avatar"> <!-- thêm dòng này -->
-    <label>Chọn ảnh đại diện mới:</label><br>
-    <input type="file" name="avatar" accept="image/*" required><br><br>
-    <button type="submit">Cập nhật</button>
-    <button type="button" onclick="cancelEdit()">Hủy</button>
-  </form>
-</div>
+     
 
 
     

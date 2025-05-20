@@ -116,34 +116,87 @@
     <button class="active" onclick="showTab('bookings')">Phòng đã đặt</button>
     <button onclick="showTab('profile')">Thông tin cá nhân</button>
   </div>
+<div id="bookings" class="tab-content active">
+    <h3>phòng đã đặt</h3>
 
-      <div id="bookings" class="tab-content active mb-5">
-      <h3>Phòng bạn đã đặt</h3>
-      {{#if bookings.length}}
-        <div class="booking-cards">
-          {{#each bookings}}
-          <div class="booking-card">
-            <p><strong>Phòng:</strong> {{room.roomNumber}}</p>
-            <p><strong>Ngày nhận phòng:</strong> {{formatDate checkIn}}</p>
-            <p><strong>Ngày trả phòng:</strong> {{formatDate checkOut}}</p>
-            <p><strong>Trạng thái thanh toán:</strong> 
-              {{#if isPaid}}<span class="paid">Đã thanh toán</span>{{else}}<span class="unpaid">Chưa thanh toán</span>{{/if}}
-            </p>
-          </div>
-          {{/each}}
+{{#each bookings}}
+  <div class="card mb-4 booking-card">
+    <div class="card-body">
+      {{#unless isDepositPaid}}
+        <div class="alert alert-warning">
+          <strong>Lưu ý:</strong> Nếu bạn không thanh toán tiền cọc trong vòng 12 giờ kể từ khi đặt, phòng sẽ bị hủy tự động.
+          <br />
+          <small>Thời gian đặt: {{formatDateTime createdAt}}</small>
         </div>
+      {{/unless}}
+
+      <p><strong>Ngày nhận phòng:</strong> {{formatDate checkIn}}</p>
+      <p><strong>Ngày trả phòng:</strong> {{formatDate checkOut}}</p>
+      <p><strong>Tổng tiền:</strong> {{totalPrice}} VND</p>
+      <p>{{#if isDepositPaid}}
+        <p><strong>Tiền đã cọc:</strong> {{deposit}} VND</p>
       {{else}}
-        <p>Bạn chưa đặt phòng nào.</p>
+        <p><strong>Tiền cần đặt cọc:</strong> {{deposit}} VND</p>
       {{/if}}
+      </p>
+      <p><strong>Số tiền cần thanh toán khi nhận phòng:</strong> {{subtract totalPrice deposit}} VND</p>
+      <p><strong>Trạng thái:</strong>
+        {{#if isDepositPaid}}
+          <span class="paid">Đã cọc</span>
+        {{else}}
+          <span class="unpaid">Chưa cọc</span>
+        {{/if}}
+      </p>
+      {{#unless isDepositPaid}}
+      <!-- Nút mở modal QR -->
+      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#qrModal-{{_id}}">
+        Thanh toán bằng Momo
+      </button>
+
+      <!-- Modal QR thanh toán -->
+      <div class="modal fade" id="qrModal-{{_id}}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <form action="/payments" method="POST">
+              <div class="modal-header">
+                <h5 class="modal-title">Quét mã QR để thanh toán</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body text-center">
+                <input type="hidden" name="bookingId" value="{{_id}}">
+                <input type="hidden" name="amount" value="{{deposit}}">
+                <input type="hidden" name="paymentMethod" value="momo">
+
+                <img src="/img/momo-qr-fake.jpg" class="img-fluid mb-3" style="max-width: 250px;" alt="QR Momo">
+                <p><strong>Số tiền cần cọc:</strong> {{deposit}} VND</p>
+                <p class="text-muted">Sau khi thanh toán, hãy nhập mã giao dịch Momo của bạn bên dưới:</p>
+
+                <input type="text" name="transactionId" class="form-control" required placeholder="Mã giao dịch Momo">
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Xác nhận đã thanh toán</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      {{/unless}}
+
+      <form action="/bookings/{{_id}}?_method=DELETE" method="POST">
+        <button type="submit" class="btn btn-danger">Hủy phòng</button>
+      </form>
     </div>
+  </div>
+  {{/each}}
 
 
-  <div id="profile" class="tab-content">
+</div>
+  
+</div>
+
+<div id="profile" class="tab-content">
    {{> update_users}}
 </div>
-</div>
-
-
 
 <script>
   function showTab(tabId) {
@@ -151,6 +204,14 @@
     document.querySelectorAll(".tab-buttons button").forEach(btn => btn.classList.remove("active"));
 
     document.getElementById(tabId).classList.add("active");
-    event.target.classList.add("active");
+
+    // Cập nhật nút được bấm
+    const buttons = document.querySelectorAll(".tab-buttons button");
+    buttons.forEach(btn => {
+      if (btn.textContent.trim() === (tabId === "bookings" ? "Phòng đã đặt" : "Thông tin cá nhân")) {
+        btn.classList.add("active");
+      }
+    });
   }
 </script>
+

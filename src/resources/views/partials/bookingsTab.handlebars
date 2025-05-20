@@ -34,7 +34,6 @@
 
 
 
-{{#if bookedRoomsDetails.length}}
 <div class="card mt-4">
   <div class="card-header bg-danger text-white">
     Chi tiết phòng đã đặt ({{bookedRoomsDetails.length}})
@@ -47,10 +46,12 @@
           <th>Loại phòng</th>
           <th>Khách hàng</th>
           <th>Email</th>
-          <th>phone</th>
+          <th>Phone</th>
           <th>Nhận phòng</th>
           <th>Trả phòng</th>
           <th>Tổng tiền</th>
+          <th>Tiền đã cọc</th>
+          <th>Phải trả khi đến</th>
         </tr>
       </thead>
       <tbody>
@@ -64,10 +65,12 @@
           <td>{{checkIn}}</td>
           <td>{{checkOut}}</td>
           <td>{{totalPrice}}₫</td>
+          <td>{{deposit}}₫</td>
+          <td>{{subtract totalPrice deposit}}₫</td>
         </tr>
         {{/each}}
       </tbody>
     </table>
   </div>
 </div>
-{{/if}}
+

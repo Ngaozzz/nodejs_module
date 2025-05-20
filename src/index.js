@@ -1,3 +1,4 @@
+// File: src/index.js
 const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
@@ -41,18 +42,31 @@ app.use(methodOverride('_method'));
 app.engine(
     'handlebars',
     engine({
+       
         extname: '.handlebars',
         helpers: {
             // Block helper for strict comparison (e.g., selecting an option)
-            ifCond(v1, v2, options) {
-                try {
-                    return v1.toString() === v2.toString()
-                        ? options.fn(this)
-                        : options.inverse(this);
-                } catch (e) {
-                    return options.inverse(this);
+            ifCond: function (v1, operator, v2, options) {
+                if (typeof options === 'undefined') {
+                    // Trường hợp bị gọi sai => fallback tránh crash
+                    return '';
                 }
-            },
+
+                switch (operator) {
+                    case '==': return (v1 == v2) ? options.fn(this) : options.inverse(this);
+                    case '===': return (v1 === v2) ? options.fn(this) : options.inverse(this);
+                    case '!=': return (v1 != v2) ? options.fn(this) : options.inverse(this);
+                    case '!==': return (v1 !== v2) ? options.fn(this) : options.inverse(this);
+                    case '<': return (v1 < v2) ? options.fn(this) : options.inverse(this);
+                    case '<=': return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+                    case '>': return (v1 > v2) ? options.fn(this) : options.inverse(this);
+                    case '>=': return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+                    case '&&': return (v1 && v2) ? options.fn(this) : options.inverse(this);
+                    case '||': return (v1 || v2) ? options.fn(this) : options.inverse(this);
+                    default: return options.inverse(this);
+                }
+                },
+
             // Inline helpers returning boolean for subexpression usage, with undefined checks
             eq(a, b) {
                 if (a == null || b == null) return false;
@@ -86,7 +100,19 @@ app.engine(
             },
             formatDate(date) {
                 return moment(date).format('YYYY-MM-DD'); // Định dạng ngày tháng theo ý muốn
-            }
+            },
+
+            formatDateTime(date) {
+                return moment(date).format('YYYY-MM-DD HH:mm:ss'); // Định dạng ngày giờ theo ý muốn
+            },
+
+            subtract(a, b) {
+                const numA = Number(a);
+                const numB = Number(b);
+                if (isNaN(numA) || isNaN(numB)) return 0;
+                return numA - numB;
+            },
+
         },
     }),
 );

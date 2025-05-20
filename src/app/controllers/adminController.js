@@ -110,7 +110,8 @@ module.exports = {
                     userPhone: b.user.phone,
                     checkIn: moment(b.checkIn).format('DD/MM/YYYY'),
                     checkOut: moment(b.checkOut).format('DD/MM/YYYY'),
-                    totalPrice: b.totalPrice
+                    totalPrice: b.totalPrice,
+                    deposit: b.deposit
                 }));
             }
 
