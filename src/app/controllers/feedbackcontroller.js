@@ -15,7 +15,7 @@ module.exports = {
     if (!req.user) return res.status(401).json({ message: "Bạn cần đăng nhập để gửi đánh giá." });
 
     const item = new Feedback({
-      user: req.user._id, // ✅ gắn đúng người dùng
+      user: req.user.id, //  gắn đúng người dùng
       rating: req.body.rating,
       comment: req.body.comment,
     });

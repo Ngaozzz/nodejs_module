@@ -14,7 +14,7 @@ const autoCancelUnpaidBookings = async () => {
       isDepositPaid: false,
       createdAt: { $lte: twelveHoursAgo }
     });
-
+    
     if (expiredBookings.length > 0) {
       console.log(` Xóa ${expiredBookings.length} booking không cọc sau 12 giờ.`);
       await Booking.deleteMany({
@@ -70,7 +70,7 @@ module.exports = {
     }
 
     try {
-      const { roomTypeId, checkIn, checkOut, paymentMethod, paymentNote } = req.body;
+      const { roomTypeId, checkIn, checkOut,  paymentNote } = req.body;
       const userId = req.user._id || req.user.id;
 
       const checkInDate = new Date(checkIn);
@@ -132,7 +132,6 @@ module.exports = {
         totalPrice,
         deposit: depositAmount,
         isDepositPaid: false,
-        paymentMethod,
         paymentNote,
         isPaid: false
       });
@@ -206,6 +205,7 @@ module.exports = {
     }
 
     try {
+      await autoCancelUnpaidBookings();
       const userId = req.user._id || req.user.id;
 
       const user = await User.findById(userId);

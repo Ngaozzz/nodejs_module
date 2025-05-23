@@ -210,6 +210,27 @@
 .star-rating label:hover ~ label {
   color: #FFD700;
 }
+#feedback-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.feedback-card {
+  background-color: #fff;
+  min-height: 180px;
+}
+@media (max-width: 992px) {
+  #feedback-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 576px) {
+  #feedback-list {
+    grid-template-columns: 1fr;
+  }
+}
+
 </style>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -223,12 +244,14 @@ document.addEventListener("DOMContentLoaded", function () {
     listEl.innerHTML = "";
     list.forEach(fb => {
       const div = document.createElement("div");
-      div.className = "border-bottom pb-2 mb-3";
+      div.className = "feedback-card p-3 border rounded shadow-sm";
       div.innerHTML = `
-        <strong>${fb.user?.name || "Ẩn danh"}</strong> – ${new Date(fb.createdAt).toLocaleDateString()}<br>
-        <span class="text-success">⭐ ${fb.rating}/5</span><br>
-        <span>${fb.comment}</span>
+        <div class="mb-2"><strong>${fb.user?.name || "Khách"}</strong> – ${new Date(fb.createdAt).toLocaleDateString()}</div>
+        <div class="text-warning mb-2">⭐ ${fb.rating}/5</div>
+        <div class="mb-2">${fb.comment}</div>
+        ${fb.reply ? `<div class="border-top pt-2 mt-2"><strong>Phản hồi:</strong> ${fb.reply}</div>` : ''}
       `;
+
       listEl.appendChild(div);
     });
   }

@@ -7,6 +7,7 @@ const { engine } = require('express-handlebars');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const moment = require('moment');
+const { requireAuth } = require('./middlewares/auth');
 
 // Ensure all dependencies are installed:
 // npm install express express-handlebars morgan method-override cookie-parser dotenv
@@ -119,6 +120,20 @@ app.engine(
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'resources/views'));
 
+
+app.use((req, res, next) => {
+  const token = req.cookies.token;
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+      req.user = decoded;
+    } catch (err) {
+      // token sai thì vẫn cho qua nhưng không gán user
+      req.user = null;
+    }
+  }
+  next();
+});
 // Routes
 route(app);
 
