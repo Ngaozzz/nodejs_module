@@ -1,3 +1,11 @@
+<!--booking -->
+{{!-- Hiển thị thông báo thành công --}}
+{{#if successMessage}}
+  <div class="alert alert-success text-center">{{successMessage}}</div>
+{{/if}}
+{{#if errorMessage}}
+  <div class="alert alert-danger text-center">{{errorMessage}}</div>
+{{/if}}
 <div class="container mt-5">
   <h2 class="mb-4">Chọn Loại Phòng</h2>
 
@@ -74,6 +82,7 @@
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                   <button type="submit" class="btn btn-success">Xác nhận & Thanh toán</button>
                 </div>
+                
               </form>
             </div>
           </div>

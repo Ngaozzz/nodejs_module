@@ -7,6 +7,7 @@ const roomTypeController = require('../app/controllers/roomTypeController');
 const RoomController = require('../app/controllers/roomcontroller');
 const userController = require('../app/controllers/usercontroller');
 
+
 router.get('/dashboard', requireAuth, requireAdmin, AdminController.dashboard);
 router.get('/users', requireAuth, requireAdmin, AdminController.manageUsers);
 router.get(
@@ -15,6 +16,7 @@ router.get(
     requireAdmin,
     AdminController.manageBookings,
 );
+router.get('/admin/feedbacks', requireAuth, requireAdmin, AdminController.manageFeedbacks);
 router.get('/rooms', requireAuth, requireAdmin, AdminController.manageRooms);
 router.get(
     '/room-types',
@@ -22,6 +24,7 @@ router.get(
     requireAdmin,
     AdminController.manageRoomTypes,
 );
+
 router.post('/room-type', requireAuth, requireAdmin, roomTypeController.create);
 router.post('/room', requireAuth, requireAdmin, RoomController.create);
 router.post(

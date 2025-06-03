@@ -53,7 +53,8 @@ module.exports = {
       res.render('bookings', {
         roomTypes: roomTypes.map(rt => rt.toObject()),
         currentUser: req.user || null,
-        errorMessage: null
+        successMessage: req.flash('successMessage'), // <-- thêm dòng này
+      errorMessage: null
       });
     } catch (err) {
       console.error('Lỗi index booking:', err);
@@ -137,6 +138,7 @@ module.exports = {
       });
 
       await booking.save();
+      req.flash('successMessage', 'Đặt phòng thành công! Vui lòng thanh toán cọc để xác nhận.');
       return res.redirect('/bookings');
     } catch (err) {
       console.error('Lỗi khi tạo booking:', err);
@@ -146,6 +148,7 @@ module.exports = {
           roomTypes: roomTypes.map(rt => rt.toObject()),
           currentUser: req.user,
           errorMessage: err.message
+         
         });
       } catch (e2) {
         console.error('Lỗi khi reload trang booking:', e2);

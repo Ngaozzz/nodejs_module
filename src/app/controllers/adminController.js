@@ -2,6 +2,8 @@ const User = require('../models/User');
 const Booking = require('../models/Booking');
 const Room = require('../models/Room');
 const RoomType = require('../models/RoomType');
+const Feedback = require('../models/Feedback');
+
 const moment = require('moment');
 require('moment/locale/vi');
 
@@ -94,6 +96,7 @@ module.exports = {
                 const bookingsInDay = await Booking.find({
                     checkIn: { $lte: selectedDate.endOf('day').toDate() },
                     checkOut: { $gte: selectedDate.startOf('day').toDate() },
+                    deposit: { $gt: 0 }
                 }).populate('user').populate({
                     path: 'room',
                     populate: { path: 'roomType' }
@@ -124,9 +127,22 @@ module.exports = {
             filteredRooms = availableRooms;
         }
 
+        const rawFeedbacks = await Feedback.find().populate('user', 'name');
+        const feedbacks = rawFeedbacks.map(fb => ({
+        ...fb.toObject(),
+        userName: fb.user?.name || 'Khách',
+        createdAtFormatted: fb.createdAt.toLocaleDateString('vi-VN'),
+        }));
+
+
+
         // Render dashboard
         res.render('admin/dashboard', {
-            users: users.map(u => u.toObject()),
+            users: users.map(u => ({
+                    ...u.toObject(),
+                    dobFormatted: u.dob ? moment(u.dob).locale('vi').format('DD/MM/YYYY') : '',
+                    
+                })),
             rooms: rooms.map(r => r.toObject()),
             roomTypes: roomTypes.map(rt => rt.toObject()),
             bookings: bookings.map(b => ({
@@ -144,6 +160,8 @@ module.exports = {
             availableCount: availableRooms.length,
             filteredRooms: filteredRooms.map(r => r.toObject()), // NEW
             selectedFilter: filter || '', 
+            feedbacks,
+
             bookedRoomsDetails,
         });
     },
@@ -175,4 +193,16 @@ module.exports = {
             types: types.map((t) => t.toObject()),
         });
     },
+        manageFeedbacks: async (req, res) => {
+        const feedbacks = await Feedback.find().populate('user', 'name');
+        res.render('admin/dashboard', {
+            feedbacks: feedbacks.map(fb => ({
+                ...fb.toObject(),
+                userName: fb.user?.name || 'Khách',
+                createdAtFormatted: fb.createdAt.toLocaleDateString('vi-VN')
+            })),
+            selectedTab: 'feedbacks'
+        });
+    },
+
 };

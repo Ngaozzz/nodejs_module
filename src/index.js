@@ -5,6 +5,8 @@ const morgan = require('morgan');
 const methodOverride = require('method-override');
 const { engine } = require('express-handlebars');
 const cookieParser = require('cookie-parser');
+const flash = require('connect-flash');
+const session = require('express-session');
 require('dotenv').config();
 const moment = require('moment');
 const { requireAuth } = require('./middlewares/auth');
@@ -33,6 +35,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+
+app.use(session({ secret: 'secret', resave: false, saveUninitialized: true }));
+app.use(flash());
 // Logger
 app.use(morgan('combined'));
 
