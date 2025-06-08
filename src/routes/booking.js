@@ -11,7 +11,7 @@ router.get('/', requireAuth, BookingController.index);
 router.post('/', requireAuth, BookingController.create);
 
 // Quan trọng: Đặt trước :id
-router.get('/my_bookings', requireAuth, BookingController.checkMyBookings);
+router.get('/my-bookings', requireAuth, BookingController.checkMyBookings);
 
 // API: Admin lấy tất cả booking (JSON)
 router.get('/all', requireAdmin, BookingController.getAllBookings);
@@ -22,6 +22,5 @@ router.get('/:id', requireAuth, BookingController.getById);
 // Cập nhật + xóa booking (admin)
 router.put('/:id', requireAdmin, BookingController.update);
 router.delete('/:id', requireAdmin, BookingController.delete);
-
 
 module.exports = router;

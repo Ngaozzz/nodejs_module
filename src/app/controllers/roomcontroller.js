@@ -8,7 +8,10 @@ module.exports = {
             res.json(rooms);
         } catch (err) {
             console.error('Lỗi khi lấy danh sách phòng:', err);
-            res.status(500).json({ message: 'Lỗi khi lấy danh sách phòng', error: err.message });
+            res.status(500).json({
+                message: 'Lỗi khi lấy danh sách phòng',
+                error: err.message,
+            });
         }
     },
 
@@ -25,7 +28,10 @@ module.exports = {
             res.redirect('/admin/dashboard');
         } catch (err) {
             console.error('Lỗi khi tạo phòng:', err);
-            res.status(500).json({ message: 'Lỗi khi thêm phòng', error: err.message });
+            res.status(500).json({
+                message: 'Lỗi khi thêm phòng',
+                error: err.message,
+            });
         }
     },
 
@@ -40,7 +46,10 @@ module.exports = {
             res.redirect('/admin/dashboard');
         } catch (err) {
             console.error('Lỗi khi cập nhật phòng:', err);
-            res.status(500).json({ message: 'Lỗi khi cập nhật phòng', error: err.message });
+            res.status(500).json({
+                message: 'Lỗi khi cập nhật phòng',
+                error: err.message,
+            });
         }
     },
 
@@ -50,7 +59,10 @@ module.exports = {
             res.redirect('/admin/dashboard');
         } catch (err) {
             console.error('Lỗi khi xóa phòng:', err);
-            res.status(500).json({ message: 'Lỗi khi xóa phòng', error: err.message });
+            res.status(500).json({
+                message: 'Lỗi khi xóa phòng',
+                error: err.message,
+            });
         }
     },
 
@@ -59,7 +71,9 @@ module.exports = {
             const { roomTypeId, checkIn, checkOut } = req.query;
 
             if (!roomTypeId || !checkIn || !checkOut) {
-                return res.status(400).json({ message: 'Thiếu thông tin yêu cầu.' });
+                return res
+                    .status(400)
+                    .json({ message: 'Thiếu thông tin yêu cầu.' });
             }
 
             const checkInDate = new Date(checkIn);
@@ -73,10 +87,12 @@ module.exports = {
             const allRooms = await Room.find({ roomType: roomTypeId });
 
             if (!allRooms || allRooms.length === 0) {
-                return res.status(404).json({ message: 'Không tìm thấy phòng nào.' });
+                return res
+                    .status(404)
+                    .json({ message: 'Không tìm thấy phòng nào.' });
             }
 
-            const allRoomIds = allRooms.map(room => room._id);
+            const allRoomIds = allRooms.map((room) => room._id);
 
             // Tìm các phòng đã được đặt trong khoảng thời gian này
             const bookedRooms = await Booking.find({
@@ -85,17 +101,24 @@ module.exports = {
                     {
                         checkIn: { $lt: checkOutDate },
                         checkOut: { $gt: checkInDate },
-                    }
-                ]
+                    },
+                ],
             }).select('room');
 
-            const bookedRoomIds = bookedRooms.map(b => b.room.toString());
+            const bookedRoomIds = bookedRooms.map((b) => b.room.toString());
 
             // Lọc phòng trống
-            const availableRooms = allRooms.filter(room => !bookedRoomIds.includes(room._id.toString()));
+            const availableRooms = allRooms.filter(
+                (room) => !bookedRoomIds.includes(room._id.toString()),
+            );
 
             if (availableRooms.length === 0) {
-                return res.status(404).json({ message: 'Không còn phòng trống trong khoảng thời gian này.' });
+                return res
+                    .status(404)
+                    .json({
+                        message:
+                            'Không còn phòng trống trong khoảng thời gian này.',
+                    });
             }
 
             res.json(availableRooms);

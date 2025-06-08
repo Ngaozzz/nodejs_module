@@ -13,8 +13,7 @@
         <li class="nav-item"><a class="nav-link active" href="/">Trang Chủ</a></li>
         <li class="nav-item"><a class="nav-link" href="/bookings">Đặt Phòng</a></li>
         <li class="nav-item"><a class="nav-link" href="/service">Ưu đãi & Dịch vụ</a></li>
-        <li class="nav-item" id="checkRoomNav" style="display: none;"><a class="nav-link" href="/bookings/my_bookings">Tài khoản của tôi</a></li>
-        <li class="nav-item" id="dashboardNav" style="display: none;"><a class="nav-link" href="/admin/dashboard">Quản lý</a></li>
+       
       </ul>
 
       <!-- Avatar / Đăng nhập -->
@@ -47,12 +46,8 @@
       </div>
     </form>
 
-    <!-- Logout Form -->
-    <div id="logoutForm" style="display: none;">
-      <p class="text-center mb-2 fw-bold" id="welcomeText"></p>
-      <button id="logoutBtn" class="btn btn-danger w-100">Đăng xuất</button>
-    </div>
-
+  
+   
    <!-- Sign Up Form -->
 <form id="signUpForm" action="/users/register" method="POST">
   <!-- Step 1: Tên, email, số điện thoại -->
@@ -134,10 +129,16 @@ function showLoggedInUI(userName, role, avatarUrl) {
   updateNavbarByRole(role);
 }
 
-// Xử lý click avatar
 authIcon.addEventListener('click', () => {
-  authPopup.classList.toggle('active');
+  const name = localStorage.getItem('userName');
+  const role = localStorage.getItem('userRole');
+  if (name && role) {
+    window.location.href = '/users/update-profile';
+  } else {
+    authPopup.classList.toggle('active');
+  }
 });
+
 
 // Chuyển tab đăng nhập / đăng ký
 signInTab.addEventListener('click', () => {

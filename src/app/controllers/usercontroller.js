@@ -2,7 +2,8 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
-
+const moment = require('moment');
+require('moment/locale/vi');
 const secretKey = process.env.JWT_SECRET || 'secret';
 
 // Lấy tất cả người dùng
@@ -19,7 +20,10 @@ exports.getAllUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
     try {
         const user = await User.findById(req.params.id).select('-password');
-        if (!user) return res.status(404).json({ message: 'Không tìm thấy người dùng' });
+        if (!user)
+            return res
+                .status(404)
+                .json({ message: 'Không tìm thấy người dùng' });
         res.json(user);
     } catch (err) {
         res.status(500).json({ message: 'Lỗi server', error: err.message });
@@ -29,8 +33,10 @@ exports.getUserById = async (req, res) => {
 // Đăng ký tài khoản
 exports.register = async (req, res) => {
     try {
-        const { name, email, phone, password, confirmPassword, gender, dob } = req.body;
-        if (password !== confirmPassword) return res.status(400).send('Mật khẩu không khớp');
+        const { name, email, phone, password, confirmPassword, gender, dob } =
+            req.body;
+        if (password !== confirmPassword)
+            return res.status(400).send('Mật khẩu không khớp');
         const existingUser = await User.findOne({ email });
         if (existingUser)
             return res.status(400).json({ message: 'Email đã được đăng ký' });
@@ -74,7 +80,7 @@ exports.login = async (req, res) => {
         const token = jwt.sign(
             { id: user._id, name: user.name, role: user.role },
             secretKey,
-            { expiresIn: '1d' }
+            { expiresIn: '1d' },
         );
 
         res.cookie('token', token, {
@@ -115,7 +121,7 @@ exports.updateUser = async (req, res) => {
         const updated = await User.findByIdAndUpdate(
             req.params.id,
             updateData,
-            { new: true }
+            { new: true },
         ).select('-password');
 
         res.redirect('/admin/dashboard');
@@ -147,7 +153,7 @@ exports.saveAvatarUrlToSession = (req, res) => {
     res.redirect('/users/profile');
 };
 
-// ✅ Trang cập nhật thông tin người dùng
+// ✅ Trang cập nhật thông tin người dùng (hiển thị thông tin cá nhân)
 exports.renderUserProfile = async (req, res) => {
     try {
         const token = req.cookies.token;
@@ -157,11 +163,69 @@ exports.renderUserProfile = async (req, res) => {
         const user = await User.findById(decoded.id).select('-password');
         if (!user) return res.status(404).send('Không tìm thấy người dùng');
 
-        const avatarUrl = req.session.avatarUrl || user.avatar;
-        res.render('partials/update_users', { user, avatarUrl });
+        const avatarUrl = req.session.avatarUrl ?? user.avatar;
+
+        // Format ngày sinh bằng moment (định dạng cho giao diện tiếng Việt)
+        const dobFormattedVi = user.dob
+            ? moment(user.dob).locale('vi').format('dddd, DD/MM/YYYY')
+            : '';
+
+        // Format ngày sinh cho input type="date" (chuẩn ISO)
+        const dobFormattedInput = user.dob
+            ? moment(user.dob).format('YYYY-MM-DD')
+            : '';
+
+        res.render('update_users', {
+            User: {
+                ...user.toObject(),
+                dobFormatted: dobFormattedInput,
+            },
+            avatarUrl,
+            dobFormattedVi,
+        });
     } catch (err) {
-        console.error(err);
+        console.error('Lỗi khi hiển thị trang cá nhân:', err.message);
         res.status(500).send('Lỗi server');
+    }
+};
+
+// Hiển thị form cập nhật thông tin cá nhân
+exports.renderUpdateForm = async (req, res) => {
+    try {
+        if (!req.user || !req.user.id) return res.redirect('/login');
+
+        const user = await User.findById(req.user.id).select('-password');
+        if (!user) return res.status(404).send('Không tìm thấy người dùng');
+
+        const dobFormatted = user.dob?.toISOString().split('T')[0];
+        const dobFormattedVi = user.dob
+            ? moment(user.dob).locale('vi').format('dddd, DD/MM/YYYY')
+            : '';
+
+        res.render('update_users', {
+            User: {
+                ...user.toObject(),
+                dobFormatted,
+            },
+            dobFormattedVi, // ✅ THÊM DÒNG NÀY
+        });
+    } catch (err) {
+        console.error('Lỗi renderUpdateForm:', err.message);
+        res.status(500).send('Lỗi server khi hiển thị form cập nhật');
+    }
+};
+
+// Đăng xuất người dùng
+exports.logout = (req, res) => {
+    res.clearCookie('token'); // Xóa cookie chứa JWT
+
+    // Nếu có sử dụng session
+    if (req.session) {
+        req.session.destroy(() => {
+            res.redirect('/');
+        });
+    } else {
+        res.redirect('/');
     }
 };
 

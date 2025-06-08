@@ -7,7 +7,6 @@ const feedbackRouter = require('./feedback');
 const roomTypeRouter = require('./roomType');
 const adminRouter = require('./admin');
 
-
 function route(app) {
     app.use('/', HomeRouter);
     app.use('/bookings', bookingRouter);
@@ -19,8 +18,7 @@ function route(app) {
     app.use('/admin', adminRouter);
     app.get('/service', (req, res) => {
         res.render('service'); // nếu bạn có file views/service.handlebars hoặc .ejs
-      });
-      
+    });
 }
 
 module.exports = route;

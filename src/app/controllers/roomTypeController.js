@@ -30,7 +30,10 @@ module.exports = {
             res.redirect('/admin/dashboard');
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Lỗi khi thêm loại phòng', error: error.message });
+            res.status(500).json({
+                message: 'Lỗi khi thêm loại phòng',
+                error: error.message,
+            });
         }
     },
 
@@ -51,7 +54,10 @@ module.exports = {
             res.redirect('/admin/dashboard');
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Lỗi khi cập nhật loại phòng', error: error.message });
+            res.status(500).json({
+                message: 'Lỗi khi cập nhật loại phòng',
+                error: error.message,
+            });
         }
     },
 
@@ -61,7 +67,10 @@ module.exports = {
             res.redirect('/admin/dashboard');
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Lỗi khi xóa loại phòng', error: error.message });
+            res.status(500).json({
+                message: 'Lỗi khi xóa loại phòng',
+                error: error.message,
+            });
         }
     },
 };

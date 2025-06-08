@@ -12,7 +12,9 @@ module.exports = {
         const tab = req.query.tab || 'overview';
         const monthQuery = req.query.month || moment().format('YYYY-MM');
         const selectedMonth = moment(monthQuery, 'YYYY-MM');
-        const selectedDate = req.query.date ? moment(req.query.date, 'YYYY-MM-DD') : moment();
+        const selectedDate = req.query.date
+            ? moment(req.query.date, 'YYYY-MM-DD')
+            : moment();
         const filter = req.query.filter; // NEW: lấy filter từ URL
 
         const users = await User.find();
@@ -27,7 +29,10 @@ module.exports = {
             },
         });
 
-        const totalRevenue = bookingsInMonth.reduce((sum, b) => sum + (b.totalPrice || 0), 0);
+        const totalRevenue = bookingsInMonth.reduce(
+            (sum, b) => sum + (b.totalPrice || 0),
+            0,
+        );
 
         // Tính doanh thu hôm nay
         const today = moment();
@@ -37,7 +42,10 @@ module.exports = {
                 $lte: today.endOf('day').toDate(),
             },
         });
-        const todayRevenue = bookingsToday.reduce((sum, b) => sum + (b.totalPrice || 0), 0);
+        const todayRevenue = bookingsToday.reduce(
+            (sum, b) => sum + (b.totalPrice || 0),
+            0,
+        );
 
         // Biểu đồ doanh thu 12 tháng gần nhất
         const monthlyRevenueData = [];
@@ -50,7 +58,10 @@ module.exports = {
                 },
             });
 
-            const monthlyRevenue = monthlyBookings.reduce((sum, b) => sum + (b.totalPrice || 0), 0);
+            const monthlyRevenue = monthlyBookings.reduce(
+                (sum, b) => sum + (b.totalPrice || 0),
+                0,
+            );
 
             monthlyRevenueData.push({
                 month: m.format('MM/YYYY'),
@@ -71,11 +82,13 @@ module.exports = {
             };
         }
 
-        const bookings = await Booking.find(bookingQuery).populate('user').populate({
-            path: 'room',
-            select: 'roomNumber roomType',
-            populate: { path: 'roomType' },
-        });
+        const bookings = await Booking.find(bookingQuery)
+            .populate('user')
+            .populate({
+                path: 'room',
+                select: 'roomNumber roomType',
+                populate: { path: 'roomType' },
+            });
 
         // Thống kê phòng đã đặt / còn trống theo ngày
         let bookedRoomIds = [];
@@ -85,70 +98,78 @@ module.exports = {
                 checkOut: { $gte: selectedDate.startOf('day').toDate() },
             }).populate('room');
 
-            bookedRoomIds = bookingsInDay.map(b => b.room._id.toString());
+            bookedRoomIds = bookingsInDay.map((b) => b.room._id.toString());
         }
 
-        const availableRooms = rooms.filter(r => !bookedRoomIds.includes(r._id.toString()));
+        const availableRooms = rooms.filter(
+            (r) => !bookedRoomIds.includes(r._id.toString()),
+        );
 
         let bookedRoomsDetails = [];
 
-            if (selectedDate) {
-                const bookingsInDay = await Booking.find({
-                    checkIn: { $lte: selectedDate.endOf('day').toDate() },
-                    checkOut: { $gte: selectedDate.startOf('day').toDate() },
-                    deposit: { $gt: 0 }
-                }).populate('user').populate({
+        if (selectedDate) {
+            const bookingsInDay = await Booking.find({
+                checkIn: { $lte: selectedDate.endOf('day').toDate() },
+                checkOut: { $gte: selectedDate.startOf('day').toDate() },
+                deposit: { $gt: 0 },
+            })
+                .populate('user')
+                .populate({
                     path: 'room',
-                    populate: { path: 'roomType' }
+                    populate: { path: 'roomType' },
                 });
 
-                bookedRoomIds = bookingsInDay.map(b => b.room._id.toString());
+            bookedRoomIds = bookingsInDay.map((b) => b.room._id.toString());
 
-                // Lấy thông tin chi tiết phòng đã đặt
-                bookedRoomsDetails = bookingsInDay.map(b => ({
-                    userName: b.user.name,
-                    userEmail: b.user.email,
-                    roomNumber: b.room.roomNumber,
-                    roomType: b.room.roomType.name,
-                    userPhone: b.user.phone,
-                    checkIn: moment(b.checkIn).format('DD/MM/YYYY'),
-                    checkOut: moment(b.checkOut).format('DD/MM/YYYY'),
-                    totalPrice: b.totalPrice,
-                    deposit: b.deposit
-                }));
-            }
-
+            // Lấy thông tin chi tiết phòng đã đặt
+            bookedRoomsDetails = bookingsInDay.map((b) => ({
+                userName: b.user.name,
+                userEmail: b.user.email,
+                roomNumber: b.room.roomNumber,
+                roomType: b.room.roomType.name,
+                userPhone: b.user.phone,
+                checkIn: moment(b.checkIn).format('DD/MM/YYYY'),
+                checkOut: moment(b.checkOut).format('DD/MM/YYYY'),
+                totalPrice: b.totalPrice,
+                deposit: b.deposit,
+            }));
+        }
 
         // NEW: Lọc danh sách phòng tương ứng theo filter
         let filteredRooms = [];
         if (filter === 'booked') {
-            filteredRooms = rooms.filter(r => bookedRoomIds.includes(r._id.toString()));
+            filteredRooms = rooms.filter((r) =>
+                bookedRoomIds.includes(r._id.toString()),
+            );
         } else if (filter === 'available') {
             filteredRooms = availableRooms;
         }
 
         const rawFeedbacks = await Feedback.find().populate('user', 'name');
-        const feedbacks = rawFeedbacks.map(fb => ({
-        ...fb.toObject(),
-        userName: fb.user?.name || 'Khách',
-        createdAtFormatted: fb.createdAt.toLocaleDateString('vi-VN'),
+        const feedbacks = rawFeedbacks.map((fb) => ({
+            ...fb.toObject(),
+            userName: fb.user?.name || 'Khách',
+            createdAtFormatted: fb.createdAt.toLocaleDateString('vi-VN'),
         }));
-
-
 
         // Render dashboard
         res.render('admin/dashboard', {
-            users: users.map(u => ({
-                    ...u.toObject(),
-                    dobFormatted: u.dob ? moment(u.dob).locale('vi').format('DD/MM/YYYY') : '',
-                    
-                })),
-            rooms: rooms.map(r => r.toObject()),
-            roomTypes: roomTypes.map(rt => rt.toObject()),
-            bookings: bookings.map(b => ({
+            users: users.map((u) => ({
+                ...u.toObject(),
+                dobFormatted: u.dob
+                    ? moment(u.dob).locale('vi').format('DD/MM/YYYY')
+                    : '',
+            })),
+            rooms: rooms.map((r) => r.toObject()),
+            roomTypes: roomTypes.map((rt) => rt.toObject()),
+            bookings: bookings.map((b) => ({
                 ...b.toObject(),
-                checkInFormatted: moment(b.checkIn).locale('vi').format('dddd, DD/MM/YYYY'),
-                checkOutFormatted: moment(b.checkOut).locale('vi').format('dddd, DD/MM/YYYY'),
+                checkInFormatted: moment(b.checkIn)
+                    .locale('vi')
+                    .format('dddd, DD/MM/YYYY'),
+                checkOutFormatted: moment(b.checkOut)
+                    .locale('vi')
+                    .format('dddd, DD/MM/YYYY'),
             })),
             totalRevenue,
             todayRevenue,
@@ -158,8 +179,8 @@ module.exports = {
             monthlyRevenueString: JSON.stringify(monthlyRevenueData),
             bookedCount: bookedRoomIds.length,
             availableCount: availableRooms.length,
-            filteredRooms: filteredRooms.map(r => r.toObject()), // NEW
-            selectedFilter: filter || '', 
+            filteredRooms: filteredRooms.map((r) => r.toObject()), // NEW
+            selectedFilter: filter || '',
             feedbacks,
 
             bookedRoomsDetails,
@@ -193,16 +214,15 @@ module.exports = {
             types: types.map((t) => t.toObject()),
         });
     },
-        manageFeedbacks: async (req, res) => {
+    manageFeedbacks: async (req, res) => {
         const feedbacks = await Feedback.find().populate('user', 'name');
         res.render('admin/dashboard', {
-            feedbacks: feedbacks.map(fb => ({
+            feedbacks: feedbacks.map((fb) => ({
                 ...fb.toObject(),
                 userName: fb.user?.name || 'Khách',
-                createdAtFormatted: fb.createdAt.toLocaleDateString('vi-VN')
+                createdAtFormatted: fb.createdAt.toLocaleDateString('vi-VN'),
             })),
-            selectedTab: 'feedbacks'
+            selectedTab: 'feedbacks',
         });
     },
-
 };

@@ -6,7 +6,7 @@ const storage = multer.diskStorage({
         cb(null, 'public/uploads/avatars'); // đảm bảo folder này tồn tại
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
         cb(null, uniqueSuffix + path.extname(file.originalname));
     },
 });

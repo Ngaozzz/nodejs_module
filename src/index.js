@@ -35,7 +35,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-
 app.use(session({ secret: 'secret', resave: false, saveUninitialized: true }));
 app.use(flash());
 // Logger
@@ -48,7 +47,6 @@ app.use(methodOverride('_method'));
 app.engine(
     'handlebars',
     engine({
-       
         extname: '.handlebars',
         helpers: {
             // Block helper for strict comparison (e.g., selecting an option)
@@ -59,19 +57,50 @@ app.engine(
                 }
 
                 switch (operator) {
-                    case '==': return (v1 == v2) ? options.fn(this) : options.inverse(this);
-                    case '===': return (v1 === v2) ? options.fn(this) : options.inverse(this);
-                    case '!=': return (v1 != v2) ? options.fn(this) : options.inverse(this);
-                    case '!==': return (v1 !== v2) ? options.fn(this) : options.inverse(this);
-                    case '<': return (v1 < v2) ? options.fn(this) : options.inverse(this);
-                    case '<=': return (v1 <= v2) ? options.fn(this) : options.inverse(this);
-                    case '>': return (v1 > v2) ? options.fn(this) : options.inverse(this);
-                    case '>=': return (v1 >= v2) ? options.fn(this) : options.inverse(this);
-                    case '&&': return (v1 && v2) ? options.fn(this) : options.inverse(this);
-                    case '||': return (v1 || v2) ? options.fn(this) : options.inverse(this);
-                    default: return options.inverse(this);
+                    case '==':
+                        return v1 == v2
+                            ? options.fn(this)
+                            : options.inverse(this);
+                    case '===':
+                        return v1 === v2
+                            ? options.fn(this)
+                            : options.inverse(this);
+                    case '!=':
+                        return v1 != v2
+                            ? options.fn(this)
+                            : options.inverse(this);
+                    case '!==':
+                        return v1 !== v2
+                            ? options.fn(this)
+                            : options.inverse(this);
+                    case '<':
+                        return v1 < v2
+                            ? options.fn(this)
+                            : options.inverse(this);
+                    case '<=':
+                        return v1 <= v2
+                            ? options.fn(this)
+                            : options.inverse(this);
+                    case '>':
+                        return v1 > v2
+                            ? options.fn(this)
+                            : options.inverse(this);
+                    case '>=':
+                        return v1 >= v2
+                            ? options.fn(this)
+                            : options.inverse(this);
+                    case '&&':
+                        return v1 && v2
+                            ? options.fn(this)
+                            : options.inverse(this);
+                    case '||':
+                        return v1 || v2
+                            ? options.fn(this)
+                            : options.inverse(this);
+                    default:
+                        return options.inverse(this);
                 }
-                },
+            },
 
             // Inline helpers returning boolean for subexpression usage, with undefined checks
             eq(a, b) {
@@ -118,26 +147,27 @@ app.engine(
                 if (isNaN(numA) || isNaN(numB)) return 0;
                 return numA - numB;
             },
-
         },
     }),
 );
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'resources/views'));
 
-
 app.use((req, res, next) => {
-  const token = req.cookies.token;
-  if (token) {
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
-      req.user = decoded;
-    } catch (err) {
-      // token sai thì vẫn cho qua nhưng không gán user
-      req.user = null;
+    const token = req.cookies.token;
+    if (token) {
+        try {
+            const decoded = jwt.verify(
+                token,
+                process.env.JWT_SECRET || 'secret',
+            );
+            req.user = decoded;
+        } catch (err) {
+            // token sai thì vẫn cho qua nhưng không gán user
+            req.user = null;
+        }
     }
-  }
-  next();
+    next();
 });
 // Routes
 route(app);
