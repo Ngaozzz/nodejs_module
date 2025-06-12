@@ -1,14 +1,28 @@
 
 
 
-<section id="background-slideshow" style="
-  width: 100vw;
-  height: 100vh;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  margin: 0;
-  padding: 0;">
+
+<!-- Phần Home giống giao diện mẫu -->
+<section id="home-section" style="display: flex; justify-content: space-between; align-items: center; padding: 50px; background: #f8f8f8;">
+  <div style="flex: 1; padding-right: 40px;">
+    <h1 style="font-size: 48px; font-weight: bold;">HOTEL BONNY</h1>
+    <h4 style="letter-spacing: 5px; margin-bottom: 20px;">LANDING PAGE</h4>
+    <p style="color: #555;">
+      Khách sạn Bonny - Nơi mang đến trải nghiệm lưu trú tuyệt vời tại Thái Bình. Với thiết kế hiện đại, dịch vụ chuyên nghiệp và vị trí thuận tiện, chúng tôi cam kết mang đến cho bạn những khoảnh khắc đáng nhớ trong chuyến đi của mình.
+    </p>
+    <button style="margin-top: 20px; background-color: #f9b500; color: #fff; border: none; padding: 12px 30px; border-radius: 30px; font-weight: bold;">READ MORE</button>
+
+    <div style="display: flex; gap: 20px; margin-top: 40px;">
+      <img src="/img/icon-bed.png" alt="Bed Icon" style="width: 40px;">
+      <img src="/img/icon-service.png" alt="Service Icon" style="width: 40px;">
+      <img src="/img/icon-food.png" alt="Food Icon" style="width: 40px;">
+    </div>
+  </div>
+
+  <div style="flex: 1; position: relative;">
+    <img src="/img/hotel9.jpg" alt="Hotel Pool" style="width: 100%; border-radius: 10px;">
+    
+  </div>
 </section>
 
 
@@ -107,33 +121,5 @@
 
 
 
-<!-- Script đổi background -->
-<script>
-  const images = [
-  '/img/hotel1.jpg',
-  '/img/hotel2.jpg',
-  '/img/hotel3.jpg',
-  '/img/hotel4.jpg',
-  '/img/hotel5.jpg',
-  '/img/hotel6.jpg',
-  '/img/hotel7.jpg',
-  '/img/hotel8.jpg',
-  '/img/hotel9.jpg',
-  '/img/hotel10.jpg'
-];
-
-let current = 0;
-const slideshow = document.getElementById('background-slideshow');
-
-function changeBackground() {
-  slideshow.style.backgroundImage = `url('${images[current]}')`;
-  current = (current + 1) % images.length;
-}
-
-changeBackground();
-setInterval(changeBackground, 3000);
-
-
-</script>
 
 
