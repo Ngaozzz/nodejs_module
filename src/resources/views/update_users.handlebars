@@ -13,12 +13,31 @@
 <div class="profile-container  mt-5">
   <div id="viewInfo">
     
-    <p><strong>Họ tên:</strong> {{User.name}} <button onclick="toggleEdit('name')">Sửa</button></p>
-    <p><strong>Email:</strong> {{User.email}} <button onclick="toggleEdit('email')">Sửa</button></p>
-    <p><strong>Số điện thoại:</strong> {{User.phone}} <button onclick="toggleEdit('phone')">Sửa</button></p>
-    <p><strong>Ngày sinh:</strong> {{dobFormattedVi}} <button onclick="toggleEdit('dob')">Sửa</button></p>
-    <p><strong>Giới tính:</strong> {{User.gender}} <button onclick="toggleEdit('gender')">Sửa</button></p>
-   
+    <div class="info-row">
+      <span><strong>Họ tên:</strong> {{User.name}}</span>
+      <button onclick="toggleEdit('name')">Sửa</button>
+    </div>
+    <div class="info-row">
+      <span><strong>Email:</strong> {{User.email}}</span>
+      <button onclick="toggleEdit('email')">Sửa</button>
+    </div>
+    <div class="info-row">
+      <span><strong>Số điện thoại:</strong> {{User.phone}}</span>
+      <button onclick="toggleEdit('phone')">Sửa</button>
+    </div>
+    <div class="info-row">
+      <span><strong>Ngày sinh:</strong> {{dobFormattedVi}}</span>
+      <button onclick="toggleEdit('dob')">Sửa</button>
+    </div>
+    <div class="info-row">
+      <span><strong>Giới tính:</strong> {{User.gender}}</span>
+      <button onclick="toggleEdit('gender')">Sửa</button>
+    </div>
+    <div class="info-row">
+    <span><strong>Mật khẩu:</strong> ********</span>
+    <button onclick="toggleEdit('password')">Đổi mật khẩu</button>
+  </div>
+
   </div>
  
 
@@ -66,6 +85,22 @@
       <button type="button" onclick="cancelEdit()">Hủy</button>
       </form>
     </div>
+
+    <div id="editPassword" style="display: none;">
+    <form method="POST" action="/users/change-password">
+      <label>Mật khẩu hiện tại:</label>
+      <input type="password" name="currentPassword" required>
+
+      <label>Mật khẩu mới:</label>
+      <input type="password" name="newPassword" required>
+
+      <label>Nhập lại mật khẩu mới:</label>
+      <input type="password" name="confirmNewPassword" required>
+
+      <button type="submit" class="btn btn-success">Cập nhật</button>
+      <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Hủy</button>
+    </form>
+  </div>
   
 </div>
 <div style="text-align: right; margin: 20px 40px 20px 0;">
@@ -115,12 +150,24 @@
 .profile-container button[type="button"] {
   background-color: #ccc;
 }
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.info-row span {
+  flex: 1;
+  font-size: 16px;
+}
+
 </style>
 
 <script>
   function toggleEdit(field) {
     // Ẩn tất cả form chỉnh sửa
-    const fields = ['Name', 'Email', 'Phone', 'dob', 'gender'];
+    const fields = ['Name', 'Email', 'Phone', 'dob', 'gender','password'];
     fields.forEach(f => {
       const section = document.getElementById('edit' + f.charAt(0).toUpperCase() + f.slice(1));
       if (section) section.style.display = 'none';
@@ -136,7 +183,7 @@
 
   function cancelEdit() {
     // Ẩn tất cả form sửa
-    const fields = ['Name', 'Email', 'Phone', 'dob', 'gender'];
+    const fields = ['Name', 'Email', 'Phone', 'dob', 'gender', 'password'];
     fields.forEach(f => {
       const section = document.getElementById('edit' + f.charAt(0).toUpperCase() + f.slice(1));
       if (section) section.style.display = 'none';

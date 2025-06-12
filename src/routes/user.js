@@ -24,5 +24,6 @@ router.post('/login', UserController.login);
 router.post('/logout', UserController.logout);
 router.put('/:id', UserController.updateUser);
 router.delete('/:id', UserController.deleteUser);
+router.post('/change-password', requireAuth, UserController.changePassword);
 
 module.exports = router;

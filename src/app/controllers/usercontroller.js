@@ -228,7 +228,29 @@ exports.logout = (req, res) => {
         res.redirect('/');
     }
 };
+exports.changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword, confirmNewPassword } = req.body;
+        if (newPassword !== confirmNewPassword) {
+            return res.status(400).send('Mật khẩu mới không khớp');
+        }
 
+        const user = await User.findById(req.user.id);
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).send('Mật khẩu hiện tại không đúng');
+        }
+
+        const hashed = await bcrypt.hash(newPassword, 10);
+        user.password = hashed;
+        await user.save();
+
+        res.redirect('/users/profile');
+    } catch (err) {
+        console.error('Lỗi đổi mật khẩu:', err.message);
+        res.status(500).send('Lỗi server khi đổi mật khẩu');
+    }
+};
 // ✅ Cập nhật thông tin người dùng (từ trang của tôi)
 exports.updateUserProfile = async (req, res) => {
     try {
