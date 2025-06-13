@@ -111,7 +111,7 @@ module.exports = {
             const bookingsInDay = await Booking.find({
                 checkIn: { $lte: selectedDate.endOf('day').toDate() },
                 checkOut: { $gte: selectedDate.startOf('day').toDate() },
-                deposit: { $gt: 0 },
+                
             })
                 .populate('user')
                 .populate({
@@ -132,6 +132,7 @@ module.exports = {
                 checkOut: moment(b.checkOut).format('DD/MM/YYYY'),
                 totalPrice: b.totalPrice,
                 deposit: b.deposit,
+                isDepositPaid: b.isDepositPaid,
             }));
         }
 

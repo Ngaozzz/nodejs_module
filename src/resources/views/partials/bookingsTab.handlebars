@@ -50,7 +50,8 @@
           <th>Nhận phòng</th>
           <th>Trả phòng</th>
           <th>Tổng tiền</th>
-          <th>Tiền đã cọc</th>
+          <th>Tiền cọc</th>
+          <th>Trạng thái</th>
           <th>Phải trả khi đến</th>
         </tr>
       </thead>
@@ -66,6 +67,13 @@
           <td>{{checkOut}}</td>
           <td>{{totalPrice}}₫</td>
           <td>{{deposit}}₫</td>
+          <td>
+            {{#if isDepositPaid}}
+              <span class="text-success">Đã cọc</span>
+            {{else}}
+              <span class="text-danger">Chưa cọc</span>
+            {{/if}}
+          </td>
           <td>{{subtract totalPrice deposit}}₫</td>
         </tr>
         {{/each}}
